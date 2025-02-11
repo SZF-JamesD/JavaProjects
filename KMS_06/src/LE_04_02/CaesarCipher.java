@@ -3,29 +3,33 @@ package LE_04_02;
 import java.util.Scanner;
 
 public class CaesarCipher {
-    public static String encrypt(String input, int shift) {
-        StringBuilder result = new StringBuilder();
+    public static char[] encrypt(char[] input, int shift) {
+        int length = input.length;
 
-        for (int i = 0; i < input.length(); i++) {
-            char currentChar = input.charAt(i);
 
-            if (Character.isLetter(currentChar)) {
-                char base = Character.isUpperCase(currentChar) ? 'A' : 'a';
+        char[] result = new char[length];
 
+        for (int i = 0; i < length; i++) {
+            char currentChar = input[i];
+
+            if ((currentChar >= 'A' && currentChar <= 'Z') || (currentChar >= 'a' && currentChar <= 'z')) {
+                char base = (currentChar >= 'A' && currentChar <= 'Z') ? 'A' : 'a';
                 char shiftedChar = (char) (((currentChar - base + shift) % 26 + 26) % 26 + base);
-                result.append(shiftedChar);
+                result[i] = shiftedChar;
             } else {
-                result.append(currentChar);
+                result[i] = currentChar;
             }
         }
-    return result.toString();
+
+        return result;
+
     }
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
         System.out.println("Enter a string to encrypt: ");
-        String input = sc.nextLine();
+        char[] input = sc.nextLine().toCharArray();
 
         int shift = 0;
         while (true) {
@@ -40,8 +44,12 @@ public class CaesarCipher {
             }
         }
 
-        String encryptedString = encrypt(input, shift);
-        System.out.println("Encrypted string: " + encryptedString);
+        char[] encryptedChars = encrypt(input, shift);
+        System.out.println("Encrypted string: ");
+        for (char c : encryptedChars) {
+            System.out.print(c);
+        }
+        System.out.println();
 
         sc.close();
     }
