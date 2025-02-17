@@ -1,6 +1,6 @@
 package LE_05._01;
 
-import java.awt.Color;
+
 import java.util.Scanner;
 public class Colours {
     public static void main(String[] args) {
