@@ -1,7 +1,7 @@
 package LE_09._01.management;
 
 import java.util.Scanner;
-import LE_09.vehicles.*;
+import LE_09._01.vehicles.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,67 +9,134 @@ public class FleetManager {
     private List<Vehicle> vehicles = new ArrayList<>();
 
     public void createVehicle(String vehicleType, Scanner sc) {
-        vehicleType = vehicleType.toLowerCase();
+        String fuelType = "";
+        int fuelLevel = 0;
+        boolean validInput = false;
+
+
         System.out.println("Enter License Plate Info: ");
         String licensePlateInfo = sc.next();
         System.out.println("Enter Current Mileage: ");
         int currentMileage = sc.nextInt();
-        System.out.println("Enter Fuel Type(Petrol, Diesel, Electric, None): ");
-        String fuelType = sc.next();
-        fuelType = fuelType.toLowerCase();
-        System.out.println("Enter Fuel Level(0 if No fuel type): ");
-        int fuelLevel = sc.nextInt();
-        switch (vehicleType) {
-            case "car": {
-                addVehicle(new Car(licensePlateInfo, currentMileage, fuelType, fuelLevel));
-                break;
+
+
+        while (!validInput) {
+            System.out.println("Enter Fuel Type (Petrol, Diesel, Electric, None): ");
+            fuelType = sc.next().toLowerCase();
+            if (fuelType.equals("petrol") || fuelType.equals("diesel") || fuelType.equals("electric") || fuelType.equals("none")) {
+                validInput = true;
+            } else {
+                System.out.println("Invalid Fuel Type, please enter a valid option.");
             }
-            case "truck": {
-                System.out.println("Enter Cargo Capacity: ");
-                int cargoCapacity = sc.nextInt();
-                System.out.println("Enter Remaining Cargo Weight: ");
-                int remainingCargoWeight = sc.nextInt();
-                addVehicle(new Truck(licensePlateInfo, currentMileage, fuelType, fuelLevel, cargoCapacity, remainingCargoWeight));
-                break;
+        }
+
+
+        validInput = false;
+        while (!validInput) {
+            System.out.println("Enter Fuel Level (0 if No fuel type): ");
+            fuelLevel = sc.nextInt();
+            if (fuelLevel >= 0) {
+                validInput = true;
+            } else {
+                System.out.println("Invalid Fuel Level, cannot be a negative number.");
             }
-            case "motorcycle": {
-                System.out.println("Does it have a side car? (Y/N): ");
-                boolean sideCar;
-                char a = sc.next().charAt(0);
-                a = Character.toUpperCase(a);
-                if (a == 'Y') {
-                    sideCar = true;
-                } else if (a == 'N') {
-                    sideCar = false;
+        }
+
+
+        switch (vehicleType.toLowerCase()) {
+            case "car":
+                if (!fuelType.equals("none")) {
+                    addVehicle(new Car(licensePlateInfo, currentMileage, fuelType, fuelLevel));
                 } else {
-                    System.out.println("Invalid input, please enter Y or N.");
-                    return;
+                    System.out.println("Invalid Fuel Type, car cannot have type 'None'");
                 }
-                addVehicle(new Motorcycle(licensePlateInfo, currentMileage, fuelType, fuelLevel, sideCar));
                 break;
-            }
-            case "bicycle": {
-                System.out.println("Enter Gear Count: ");
-                if (sc.hasNextInt()) {
-                    int gearCount = sc.nextInt();
-                    if (gearCount > 0) {
-                        addVehicle(new Bicycle(licensePlateInfo, currentMileage, fuelType, gearCount));
-                        break;
-                    } else {
-                        System.out.println("Invalid input, gear count must be greater than 0.");
-                        break;
+
+            case "truck":
+                if (!fuelType.equals("none")) {
+                    int cargoCapacity = 0, remainingCargoWeight = 0;
+                    validInput = false;
+                    while (!validInput) {
+                        System.out.println("Enter Cargo Capacity: ");
+                        cargoCapacity = sc.nextInt();
+                        if (cargoCapacity < 0) {
+                            System.out.println("Invalid Cargo Capacity, cannot be a negative number");
+                        } else {
+                            validInput = true;
+                        }
+                    }
+
+                    validInput = false;
+                    while (!validInput) {
+                        System.out.println("Enter Remaining Cargo Weight: ");
+                        remainingCargoWeight = sc.nextInt();
+                        if (remainingCargoWeight > cargoCapacity) {
+                            System.out.println("Invalid Remaining Cargo Weight, cannot exceed Cargo Capacity");
+                        } else {
+                            validInput = true;
+                        }
+                    }
+
+                    addVehicle(new Truck(licensePlateInfo, currentMileage, fuelType, fuelLevel, cargoCapacity, remainingCargoWeight));
+                } else {
+                    System.out.println("Invalid Fuel Type, truck cannot have type 'None'");
+                }
+                break;
+
+            case "motorcycle":
+                if (!fuelType.equals("none")) {
+                    boolean sideCar = false;
+                    validInput = false;
+                    while (!validInput) {
+                        System.out.println("Does it have a side car? (Y/N): ");
+                        char a = sc.next().charAt(0);
+                        a = Character.toUpperCase(a);
+                        if (a == 'Y') {
+                            sideCar = true;
+                            validInput = true;
+                        } else if (a == 'N') {
+                            sideCar = false;
+                            validInput = true;
+                        } else {
+                            System.out.println("Invalid input, please enter Y or N.");
+                        }
+                    }
+                    addVehicle(new Motorcycle(licensePlateInfo, currentMileage, fuelType, fuelLevel, sideCar));
+                } else {
+                    System.out.println("Invalid Fuel Type, Motorcycle cannot have type 'None'");
+                }
+                break;
+
+            case "bicycle":
+                if (fuelType.equals("petrol") || fuelType.equals("diesel")) {
+                    System.out.println("Invalid Fuel Type, Bicycle cannot have type petrol or diesel");
+                } else {
+                    int gearCount = 0;
+                    validInput = false;
+                    while (!validInput) {
+                        System.out.println("Enter Gear Count: ");
+                        if (sc.hasNextInt()) {
+                            gearCount = sc.nextInt();
+                            if (gearCount > 0) {
+                                addVehicle(new Bicycle(licensePlateInfo, currentMileage, fuelType, gearCount));
+                                validInput = true;
+                            } else {
+                                System.out.println("Invalid input, gear count must be greater than 0.");
+                            }
+                        } else {
+                            System.out.println("Invalid input, please enter an integer for gear count.");
+                            sc.next();
+                        }
                     }
                 }
-                System.out.println("Invalid input, please enter an integer for gear count.");
                 break;
-            }
-            default: {
+
+            default:
                 System.out.println("Invalid input, please enter a valid string for the vehicle type.");
                 break;
-            }
-            }
-
         }
+    }
+
 
 
 
@@ -87,6 +154,7 @@ public class FleetManager {
     }
 
     public void drive(String plate, int distance){
+        if (distance > 0) {
         for (Vehicle v : vehicles) {
             if (v.getLicensePlate().equals(plate)) {
                 v.drive(distance);
@@ -94,9 +162,13 @@ public class FleetManager {
             }
         }
         System.out.println("Vehicle Not Found");
-    }
+    }else {
+            System.out.println("Distance cannot be a negative number");
+        }
+        }
 
     public void refuelVehicle(String plate, int amount) {
+        if (amount > 0) {
         for (Vehicle v : vehicles) {
             if (v.getLicensePlate().equals(plate)) {
                 v.refuel(amount);
@@ -104,6 +176,8 @@ public class FleetManager {
             }
         }
         System.out.println("Vehicle Not Found");
+    }else {
+        System.out.println("Deposited fuel cannot be a negative number");}
     }
 
     public void vehicleSpecifics(String type) {
