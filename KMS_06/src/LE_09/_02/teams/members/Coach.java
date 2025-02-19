@@ -14,7 +14,7 @@ public class Coach extends Person {
     }
 
     @Override
-    public void displayInfo() {
-        System.out.printf("Coach: %s\nTeam: %s\nAge: %d\nCoachID: %s\n", getTeam(), getName(), getAge(), getCoachID());
+    public String displayInfo() {
+        return String.format("Coach %s CoachID: %s\n", super.displayInfo(), getCoachID());
     }
 }

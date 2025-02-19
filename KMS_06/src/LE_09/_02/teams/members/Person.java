@@ -23,5 +23,7 @@ public abstract class Person {
         return team;
     }
 
-    public abstract void displayInfo();
+    public String displayInfo(){
+        return String.format(": %s\nTeam: %s\nAge: %d\n", name, team, age);
+    };
 }
