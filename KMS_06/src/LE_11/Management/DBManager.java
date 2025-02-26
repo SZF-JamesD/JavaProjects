@@ -252,7 +252,7 @@ stmt -> stmt.setInt(1, tId),
         return results;
     }
 
-    public <T> T executeSingleResultQuery(String sql, SQLConsumer<PreparedStatement> stmtSetter, SQLFunction<ResultSet, T> resultSetMapper) throws SQLException {
+    private <T> T executeSingleResultQuery(String sql, SQLConsumer<PreparedStatement> stmtSetter, SQLFunction<ResultSet, T> resultSetMapper) throws SQLException {
         try (Connection con = getConnection("club_management");
             PreparedStatement stmt = con.prepareStatement(sql)) {
             stmtSetter.accept(stmt);
